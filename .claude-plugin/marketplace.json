@@ -1,0 +1,13 @@
+{
+  "name": "usmanniqbal",
+  "owner": {
+    "name": "usmanniqbal"
+  },
+  "plugins": [
+    {
+      "name": "devflow",
+      "source": "./plugins/devflow",
+      "description": "PR workflow skills: create, review, announce, and address comments on pull requests. Bundles Atlassian + Slack remote MCPs."
+    }
+  ]
+}

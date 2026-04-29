@@ -1,38 +1,40 @@
 ---
 name: create-pr
-description: Create a pull request following the repo's PR template, with all config references verified against the actual codebase. Use when the user asks to open/create a PR.
+description: Use when the user asks to open a pull request, create a PR, or push a feature branch and surface it for review
 ---
 
 # create-pr
 
-Create a pull request that matches the repo's conventions and won't fail review due to missing references or wrong format.
+Open a PR that matches the repo's conventions and won't bounce on missing references or wrong format.
+
+**REQUIRED:** Read `../../CONVENTIONS.md` first. It defines tool access, writing style, and commit conventions.
 
 ## Steps
 
-1. **Read the repo's PR template** at `.github/pull_request_template.md`. Match its structure exactly (common sections: Type, Ticket, Packages table, Details, Verification Steps, Blockers, Followup, Checklist). If no template exists, fall back to a concise Summary + Test Plan.
+1. **Read the repo's PR template** at `.github/pull_request_template.md`. Match its sections exactly (common ones: Type, Ticket, Packages, Details, Verification Steps, Blockers, Followup, Checklist). If no template exists, fall back to a concise Summary + Test Plan.
 
 2. **Gather branch context** in parallel:
    - `git status` (no `-uall`)
    - `git diff` (staged + unstaged)
-   - `git log <base>..HEAD` and `git diff <base>...HEAD` to see every commit in the PR, not just the latest
-   - Current branch tracking state
+   - `git log <base>..HEAD` and `git diff <base>...HEAD` so you see every commit, not just the latest
+   - Branch tracking state
 
-3. **Verify all referenced configs/dependencies**. If the diff touches config files (Dependabot, CODEOWNERS, workflows, tsconfig paths, package.json scripts, etc.), confirm every referenced package/path/file actually exists in the repo. A PR that references a deleted package or misspelled path will bounce.
+3. **Verify referenced configs.** If the diff touches Dependabot, CODEOWNERS, workflows, tsconfig paths, or `package.json` scripts, confirm every referenced package, path, or file actually exists. Misspellings and stale references are the top reason PRs bounce.
 
 4. **Draft title and body**:
-   - Title under 70 chars, follows Conventional Commits style if the repo uses it
-   - Body follows the template sections
-   - **Verification Steps must be realistic** — ask reviewers to verify the implementation, not to wait for CI or external systems
-   - Include the Jira ticket reference (e.g., `EXP-XXXXX`) in the title or a dedicated Ticket field
+   - Title under 70 chars, Conventional Commits style if the repo uses it.
+   - Body follows the template.
+   - Verification Steps must be realistic: ask reviewers to verify the implementation, not to wait for CI.
+   - Include the Jira ticket reference (e.g., `EXP-XXXXX`) in the title or a dedicated Ticket field.
 
 5. **Push the branch** with `-u` if it isn't tracking a remote.
 
-6. **Create the PR** using `gh pr create` with a HEREDOC body for correct formatting.
+6. **Create the PR** via `gh pr create` with a HEREDOC body for correct formatting.
 
-7. **Return the PR URL** so the user can open it.
+7. **Return the PR URL.**
 
 ## Do not
 
-- Do not invent template sections the repo doesn't use.
-- Do not skip the dependency verification step on config-touching PRs.
-- Do not ask reviewers to "wait for CI to pass" as a verification step.
+- Invent template sections the repo doesn't use.
+- Skip dependency verification on config-touching PRs.
+- Ask reviewers to "wait for CI to pass" as a verification step.

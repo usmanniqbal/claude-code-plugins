@@ -1,35 +1,31 @@
 ---
 name: announce-pr
-description: Announce a PR is ready for review — transition the Jira ticket to "To Review" first, then post to Slack with link previews disabled. Use when the user says to post/announce a PR.
+description: Use when the user says "announce the PR", "post the PR to Slack", "share the PR with the team", or asks to mark a PR ready for review
 ---
 
 # announce-pr
 
-Announce that a PR is ready for review in a way that keeps Jira and Slack consistent.
+Announce a PR is ready for review. Keep Jira and Slack consistent: transition the ticket first, then post.
 
-## Order matters
+**REQUIRED:** Read `../../CONVENTIONS.md` first. It defines tool access, anchored references, and writing style.
 
-Always execute in this exact order. Do not swap steps.
+## Steps, in order
 
-### 1. Transition the Jira ticket
+### 1. Transition the Jira ticket first
 
-Move the ticket to the **"To Review"** board column **before** posting to Slack.
+Move the ticket to **"To Review"** before posting anywhere.
 
-- Target status name: `Review`
-- Transition id in the EXP project: **`41`**
-- Do **not** use `81` — that maps to "In Review", a different status that lives later in the workflow.
+- Status name: `Review`.
+- Transition id in the EXP project: **`41`**. Do not use `81` ("In Review", a different status later in the workflow).
 
-Use the `transitionJiraIssue` tool on the bundled `atlassian` MCP server with the ticket key from the PR title/body. Do this without asking the user — it's part of the workflow.
+Use the Atlassian MCP's `transitionJiraIssue` with the ticket key from the PR title or body. Do this without asking; it's part of the workflow.
 
 ### 2. Preview the Slack message
 
-Show the user:
-- The exact message text
-- The target channel (name + ID)
+Show the user the exact message text and target channel (name and ID). Wait for explicit confirmation. Posting to a team channel is public and hard to reverse.
 
-Wait for explicit confirmation. Posting to a team channel is public and hard to reverse.
+Format:
 
-Message format:
 ```
 EXP-XXXXX: <short description>
 <PR URL>
@@ -37,7 +33,7 @@ EXP-XXXXX: <short description>
 
 ### 3. Post to Slack
 
-Use `chat.postMessage` with `unfurl_links: false` to keep the channel clean:
+Use `chat.postMessage` (via the Slack MCP) with `unfurl_links: false` to keep the channel clean.
 
 ```json
 {
@@ -47,13 +43,13 @@ Use `chat.postMessage` with `unfurl_links: false` to keep the channel clean:
 }
 ```
 
-## Why the order matters
+## Why the order
 
-Teammates scanning Slack click through expecting the ticket to already be in "To Review". A posted PR with a ticket still in "In Progress" creates confusion and slows review.
+Teammates clicking through Slack expect the ticket to already be in "To Review". A posted PR with a ticket still "In Progress" creates confusion and slows review.
 
 ## Do not
 
-- Do not post to Slack before transitioning the ticket.
-- Do not omit `unfurl_links: false` — channels get noisy fast with expanded previews.
-- Do not post without previewing the message to the user first.
-- Do not use transition id `81` (In Review) — that's the wrong status for this step.
+- Post to Slack before transitioning the ticket.
+- Omit `unfurl_links: false`; channels get noisy with previews.
+- Post without previewing the message to the user first.
+- Use transition id `81` (In Review); that's the wrong status.

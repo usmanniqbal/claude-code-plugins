@@ -11,7 +11,7 @@ Review a PR with the customer context, acceptance criteria, and urgency signals 
 
 ## Steps
 
-1. **Fetch the PR**: `gh pr view <n> --json title,body,number,headRefName,headRefOid,baseRefName,url,author,files,commits`.
+1. **Resolve the repo and PR number** per `CONVENTIONS.md` (parse a PR URL if given, else `gh repo view --json nameWithOwner`, else ask). Cache `<owner>/<repo>` and `<n>`. Then fetch: `gh pr view <n> --repo <owner>/<repo> --json title,body,number,headRefName,headRefOid,baseRefName,url,author,files,commits`.
 
 2. **Extract the Jira ticket** from the title or body (`EXP-\d+` or similar). If absent, ask the user before proceeding without ticket context.
 

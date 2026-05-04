@@ -11,6 +11,10 @@ Announce a PR is ready for review. Keep Jira and Slack consistent: transition th
 
 ## Steps, in order
 
+### 0. Resolve the PR
+
+Per `CONVENTIONS.md`: parse a PR URL if given, else `gh pr view --json url,number,title,body --repo $(gh repo view --json nameWithOwner -q .nameWithOwner)` from the cwd, else ask. Cache the PR URL, number, and ticket key from the title.
+
 ### 1. Transition the Jira ticket first
 
 Move the ticket to **"To Review"** before posting anywhere.

@@ -11,27 +11,29 @@ Open a PR that matches the repo's conventions and won't bounce on missing refere
 
 ## Steps
 
-1. **Read the repo's PR template** at `.github/pull_request_template.md`. Match its sections exactly (common ones: Type, Ticket, Packages, Details, Verification Steps, Blockers, Followup, Checklist). If no template exists, fall back to a concise Summary + Test Plan.
+1. **Confirm you're in the right repo's clone.** `create-pr` runs against the cwd's git repo. If `gh repo view --json nameWithOwner` doesn't match the user's intent (or fails), stop and ask which repo before continuing.
 
-2. **Gather branch context** in parallel:
+2. **Read the repo's PR template** at `.github/pull_request_template.md`. Match its sections exactly (common ones: Type, Ticket, Packages, Details, Verification Steps, Blockers, Followup, Checklist). If no template exists, fall back to a concise Summary + Test Plan.
+
+3. **Gather branch context** in parallel:
    - `git status` (no `-uall`)
    - `git diff` (staged + unstaged)
    - `git log <base>..HEAD` and `git diff <base>...HEAD` so you see every commit, not just the latest
    - Branch tracking state
 
-3. **Verify referenced configs.** If the diff touches Dependabot, CODEOWNERS, workflows, tsconfig paths, or `package.json` scripts, confirm every referenced package, path, or file actually exists. Misspellings and stale references are the top reason PRs bounce.
+4. **Verify referenced configs.** If the diff touches Dependabot, CODEOWNERS, workflows, tsconfig paths, or `package.json` scripts, confirm every referenced package, path, or file actually exists. Misspellings and stale references are the top reason PRs bounce.
 
-4. **Draft title and body**:
+5. **Draft title and body**:
    - Title under 70 chars, Conventional Commits style if the repo uses it.
    - Body follows the template.
    - Verification Steps must be realistic: ask reviewers to verify the implementation, not to wait for CI.
    - Include the Jira ticket reference (e.g., `EXP-XXXXX`) in the title or a dedicated Ticket field.
 
-5. **Push the branch** with `-u` if it isn't tracking a remote.
+6. **Push the branch** with `-u` if it isn't tracking a remote.
 
-6. **Create the PR** via `gh pr create` with a HEREDOC body for correct formatting.
+7. **Create the PR** via `gh pr create` with a HEREDOC body for correct formatting.
 
-7. **Return the PR URL.**
+8. **Return the PR URL.**
 
 ## Do not
 

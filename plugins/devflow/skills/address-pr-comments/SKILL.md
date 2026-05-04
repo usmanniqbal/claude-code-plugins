@@ -11,8 +11,8 @@ Triage unresolved review threads, failing CI checks, and DeepSource issues on a 
 
 ## Steps
 
-1. **Fetch PR state**:
-   - `gh pr view <n> --json title,body,number,headRefName,headRefOid,baseRefName,url,author,statusCheckRollup,comments,reviews`
+1. **Resolve the repo and PR number** per `CONVENTIONS.md` (parse a PR URL if given, else `gh repo view --json nameWithOwner`, else ask). Cache `<owner>/<repo>` and `<n>`. Then fetch PR state:
+   - `gh pr view <n> --repo <owner>/<repo> --json title,body,number,headRefName,headRefOid,baseRefName,url,author,statusCheckRollup,comments,reviews`
    - Unresolved review threads via GraphQL (thread IDs are required to reply/resolve):
 
      ```bash

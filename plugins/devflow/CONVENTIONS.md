@@ -2,6 +2,18 @@
 
 Shared rules referenced by every skill in this plugin. Read this once per session, then apply throughout.
 
+## Repo resolution
+
+Every skill that touches a PR needs to know which repo (`<owner>/<repo>`) and PR number it's working with. Resolve in this order:
+
+1. **Explicit input.** If the user passed a PR URL (`https://github.com/<owner>/<repo>/pull/<n>`), parse it; that's authoritative. If they passed just a number (`#861` or `861`), fall through to the cwd.
+2. **Current working directory.** Run `gh repo view --json nameWithOwner,defaultBranchRef -q '.nameWithOwner'`. If it succeeds, you're in a clone of that repo. Combine with the PR number from step 1.
+3. **No repo context.** If neither yields a result (cwd is not a git repo, or `gh` isn't auth'd), ask the user: "Which repo is PR #<n> in? (`<owner>/<repo>`)." Don't guess.
+
+Once resolved, cache `<owner>`, `<repo>`, and `<n>` for the rest of the session. Every `gh` and `gh api` call in the skill should pass `--repo <owner>/<repo>` explicitly so the skill works from any cwd, not just inside the repo's clone.
+
+If the user refers to a product or app name instead of a repo (for example, "the mobile app PR" or "review the portal"), check user memory for a repo-to-product mapping before asking. If no mapping is recorded, ask which repo they mean.
+
 ## Tool access preference
 
 When a skill needs data from an external service (Jira, Slack, GitHub, Figma, Notion, DeepSource, etc.), prefer methods in this order:

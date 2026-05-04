@@ -20,7 +20,11 @@ When a skill needs data from an external service (Jira, Slack, GitHub, Figma, No
 
 ## Anchored references
 
-Whenever you mention a file, line, review comment, Jira ticket, fixup commit, DeepSource issue, or Slack thread in chat output, format it as a markdown link. Never bare IDs or bare URLs. Apply everywhere outside code fences.
+Whenever you mention any external resource (files, lines, tickets, comments, threads, pages, frames, dashboards, etc.) in chat output, format it as a markdown link to the most specific place a click can land. Never bare IDs or bare URLs. Apply everywhere outside code fences.
+
+**The rule of specificity:** link to the smallest addressable unit you have. If you're talking about a comment on a Jira ticket, link the comment, not the ticket. If you're talking about a Figma node, link the node, not the file. If you're talking about a paragraph in Notion, link the block, not the page.
+
+### GitHub
 
 - **File + line within the PR** (preferred, opens Files Changed with the diff visible):
   - `[path/file.ts:42](https://github.com/<owner>/<repo>/pull/<n>/files#diff-<hash>R42)`
@@ -30,11 +34,44 @@ Whenever you mention a file, line, review comment, Jira ticket, fixup commit, De
 - **File + line outside the PR** (fallback):
   - `[path/file.ts:42](https://github.com/<owner>/<repo>/blob/<sha>/path/file.ts#L42)`
   - `<sha>` = `headRefOid` from `gh pr view --json headRefOid`. Multi-line: `#L42-L58`.
-- **Jira ticket**: `[EXP-22217](https://<org>.atlassian.net/browse/EXP-22217)`. Get `<org>` once per session via the Atlassian MCP's `getAccessibleAtlassianResources`, or pull from any existing Jira link in the PR. Cache.
-- **Existing PR review comment**: `https://github.com/<owner>/<repo>/pull/<n>#discussion_r<comment-id>`, or use the `html_url` returned by the GitHub API for newly-posted comments.
+- **PR review comment**: `https://github.com/<owner>/<repo>/pull/<n>#discussion_r<comment-id>`, or the `html_url` returned by the API for newly-posted comments.
+- **PR top-level comment**: `https://github.com/<owner>/<repo>/pull/<n>#issuecomment-<comment-id>`.
+- **PR commit**: `https://github.com/<owner>/<repo>/pull/<n>/commits/<sha>` (or `/commit/<sha>` for repo-level).
+- **Issue**: `[#1234](https://github.com/<owner>/<repo>/issues/1234)`. For a specific comment, append `#issuecomment-<id>`.
+- **Workflow run / failing check**: link the specific run, e.g., `[lint failed](https://github.com/<owner>/<repo>/actions/runs/<run-id>)`. For a job, append `/job/<job-id>`.
+
+### Jira (Atlassian)
+
+- **Ticket**: `[EXP-22217](https://<org>.atlassian.net/browse/EXP-22217)`. Get `<org>` once per session via the Atlassian MCP's `getAccessibleAtlassianResources`, or pull from any existing Jira link in the PR. Cache.
+- **Ticket comment**: `https://<org>.atlassian.net/browse/EXP-22217?focusedCommentId=<comment-id>`. The Atlassian MCP returns comment IDs in `getJiraIssue`'s comment payload.
+- **Ticket activity tab** (history, worklog): append `?focusedTab=<tab>` such as `comments`, `history`, `worklog`.
+- **Confluence page**: use the page URL as returned by the MCP; for an anchor inside a page, append `#<heading-anchor>`.
+
+### Slack
+
+- **Message or thread**: link the permalink directly. `[customer thread](https://<workspace>.slack.com/archives/<C...>/p<ts>)`. The `p` form anchors to the exact message; without `p` it just opens the channel.
+- **Channel**: only when explicitly referring to the channel itself, not a message inside it.
+
+### Notion
+
+- **Page**: `[Page title](https://www.notion.so/<workspace>/<page-id>)`. The Notion MCP returns full page URLs.
+- **Block within a page**: append `#<block-id>` to land on a specific paragraph, heading, or callout. The MCP exposes block IDs.
+- **Database row**: `https://www.notion.so/<workspace>/<row-page-id>`.
+
+### Figma
+
+- **File**: `[Designs](https://www.figma.com/file/<file-key>/<file-name>)`.
+- **Frame or node** (preferred when discussing specific UI): append `?node-id=<node-id>`. Format: `https://www.figma.com/file/<file-key>/<file-name>?node-id=123-456`. The Figma MCP exposes node IDs.
+- **Comment on a frame**: append `#<comment-id>` after the node-id query.
+
+### Other
+
 - **DeepSource issue**: prefer the URL the CLI returns; fallback `https://app.deepsource.com/gh/<owner>/<repo>/issue/<id>/`.
 - **Fixup commit**: `[fixup abc1234](https://github.com/<owner>/<repo>/commit/abc1234)`.
-- **Slack thread**: link the permalink directly: `[customer thread](https://<workspace>.slack.com/archives/C.../p...)`.
+- **Sentry / Datadog / Grafana / monitoring dashboard**: always include the deep-link URL with the relevant query params (time range, filters) preserved, so a click reproduces the view you saw.
+- **Anything else with a URL**: link it. If the source has a "copy link to this comment / block / frame / row" affordance, that's the URL to use.
+
+When the most-specific URL isn't easily available, link the closest level you do have, and say so briefly (for example, "Couldn't get a comment-deep link, here's the ticket: [EXP-22217](...)"). Never silently drop to a less-specific link.
 
 ## Writing style
 

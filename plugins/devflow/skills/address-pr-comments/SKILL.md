@@ -59,15 +59,15 @@ Triage unresolved review threads, failing CI checks, and DeepSource issues on a 
    - `REPLY`: question, subjective preference, or already addressed.
    - `DEFER`: ambiguous; ask the user before acting.
 
-8. **Draft per item**: for `FIX`, locate the code and plan the edit (don't edit yet). For `REPLY`, draft the exact text. Every `FIX` tied to a thread also gets a short reply ("Fixed in <fixup-sha>."). DeepSource fixes don't need a thread reply.
+8. **Draft per item**: for `FIX`, locate the code and plan the edit (don't edit yet). For `REPLY`, draft the exact text. Every `FIX` tied to a thread also gets a short reply that describes what changed in human terms (per `CONVENTIONS.md` "Writing PR replies and comments"), not just a commit anchor. DeepSource fixes don't need a thread reply.
 
 9. **Preview the full plan** in one message:
 
    ```
    Item 1, thread on src/foo.ts:42 (reviewer @alice)
      Category: FIX (code)
-     Edit:    src/foo.ts:42, <one-line summary>
-     Reply:   "Fixed in fixup, thanks for catching this."
+     Edit:    src/foo.ts:42, tighten null check on user.email
+     Reply:   "Good catch, tightened the null check so the falsy case no longer reaches the formatter."
 
    Item 2, CI: lint
      Category: FIX (CI)
@@ -109,5 +109,6 @@ Triage unresolved review threads, failing CI checks, and DeepSource issues on a 
 - Read DeepSource issues from the check run log; use the CLI.
 - Resolve a thread until the fix is pushed.
 - Mass-reply "fixed!" to threads you didn't actually fix.
+- Lead a reply with a commit SHA. Describe the change in plain language; anchor the commit only when the SHA itself is genuinely useful.
 - Categorize a subjective disagreement as `FIX`; use `REPLY`.
 - Proceed on `DEFER` items without asking.

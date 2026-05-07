@@ -87,6 +87,17 @@ Whenever you mention any external resource (files, lines, tickets, comments, thr
 
 When the most-specific URL isn't easily available, link the closest level you do have, and say so briefly (for example, "Couldn't get a comment-deep link, here's the ticket: [EXP-22217](...)"). Never silently drop to a less-specific link.
 
+## Writing PR replies and comments
+
+When posting a reply on a review thread or a top-level PR comment, describe what changed in human terms. A reader skimming the thread should know what you did without clicking through. Anchor a commit only when the SHA is genuinely useful (for example, when the fixup is on its own commit so the reviewer can isolate it), never as a substitute for explaining the fix.
+
+- Bad: "Fixed in [abc1234](...)."
+- Bad: "[abc1234](...)"
+- Good: "Tightened the null check on `user.email` so the falsy case no longer reaches the formatter."
+- Good (when SHA matters): "Pulled the regex into `validators.ts` per your suggestion. See [fixup abc1234](...) if you want to review it isolated."
+
+Same rule for "Why didn't this change?" replies: explain the reasoning, link the supporting place (existing pattern, ADR, ticket discussion), don't just point at a file.
+
 ## Writing style
 
 - No em dashes anywhere in chat output, commit messages, PR bodies, or replies. Use commas, colons, parentheses, or periods.

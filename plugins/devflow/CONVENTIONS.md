@@ -12,6 +12,8 @@ Every skill that touches a PR needs to know which repo (`<owner>/<repo>`) and PR
 
 Once resolved, cache `<owner>`, `<repo>`, and `<n>` for the rest of the session. Every `gh` and `gh api` call in the skill should pass `--repo <owner>/<repo>` explicitly so the skill works from any cwd, not just inside the repo's clone.
 
+**Default branch:** never assume `main` or `master`. Resolve once per session: `gh repo view <owner>/<repo> --json defaultBranchRef -q '.defaultBranchRef.name'`. Cache as `<base>` and use it for diff ranges, base-branch comparisons, and any "reset to default" instructions.
+
 If the user refers to a product or app name instead of a repo (for example, "the mobile app PR" or "review the portal"), check user memory for a repo-to-product mapping before asking. If no mapping is recorded, ask which repo they mean.
 
 ## Tool access preference

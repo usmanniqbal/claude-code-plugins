@@ -1,7 +1,7 @@
 {
   "name": "devflow",
-  "version": "0.2.0",
-  "description": "Development workflow skills, starting with PR create/review/announce/address-comments. Bundles Atlassian and Slack remote MCPs.",
+  "version": "0.3.0",
+  "description": "Development workflow skills: ticket research, PR create/review/announce/address-comments. Bundles Atlassian and Slack remote MCPs.",
   "author": {
     "name": "usmanniqbal"
   }

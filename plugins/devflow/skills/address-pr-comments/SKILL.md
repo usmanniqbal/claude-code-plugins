@@ -59,40 +59,71 @@ Triage unresolved review threads, failing CI checks, and DeepSource issues on a 
    - `REPLY`: question, subjective preference, or already addressed.
    - `DEFER`: ambiguous; ask the user before acting.
 
-8. **Draft per item**: for `FIX`, locate the code and plan the edit (don't edit yet). For `REPLY`, draft the exact text. Every `FIX` tied to a thread also gets a short reply that describes what changed in human terms (per `CONVENTIONS.md` "Writing PR replies and comments"), not just a commit anchor. DeepSource fixes don't need a thread reply.
+   **Tag the reviewer type per thread.** Check each thread's author login. Bot accounts (login ends `[bot]`, or matches known AI review bots: `augmentcode`, `copilot`, `github-actions`, `deepsource`, `codecov`, similar) get the **AI flow** in step 8. Everyone else is **human**.
+
+8. **Draft per item.** For `FIX`, locate the code and plan the edit (don't edit yet). For `REPLY`, draft the exact text. Whether you draft a reply at all depends on the reviewer type:
+
+   **Human reviewer threads.** Every `FIX` and `REPLY` gets a draft reply describing what changed in human terms (per `CONVENTIONS.md` "Writing PR replies and comments"), not a commit anchor. Every reply waits for explicit approval before posting; code fixes can be applied and pushed on the user's "yes," but the reply itself stays human-in-the-loop.
+
+   **AI reviewer threads.** No human is waiting; close the loop with reactions instead of noise:
+   - `FIX` where the fix matches what the bot proposed → **react 👍 on the bot's original comment + resolve the thread. No reply.** A "Fixed!" comment is noise when the fix is identical to the suggestion.
+   - `FIX` where the fix differs from the proposal, OR the bot asked a question → 👍 + resolve **PLUS** a concise reply explaining the diff or answering.
+   - `REPLY` where you disagree with the bot's suggestion → reply with the disagreement AND react 👎 on the bot's original comment. **Do NOT resolve the thread** — leave it for a human reviewer to weigh in.
+
+   `FIX (DeepSource)` items don't need a thread reply or reaction — they aren't review threads; the green re-analysis check is the signal.
 
 9. **Preview the full plan** in one message:
 
    ```
-   Item 1, thread on src/foo.ts:42 (reviewer @alice)
+   Item 1, thread on src/foo.ts:42 (reviewer @alice, human)
      Category: FIX (code)
      Edit:    src/foo.ts:42, tighten null check on user.email
      Reply:   "Good catch, tightened the null check so the falsy case no longer reaches the formatter."
 
-   Item 2, CI: lint
+   Item 2, thread on src/bar.ts:18 (reviewer @augmentcode-ai[bot], AI)
+     Category: FIX (code) — fix matches proposal
+     Edit:    src/bar.ts:18, use Array.from instead of spread
+     Action:  👍 + resolve, no reply
+
+   Item 3, thread on src/baz.ts:7 (reviewer @copilot[bot], AI)
+     Category: REPLY — disagree with bot's suggestion
+     Reply:   "Keeping the explicit type here so the inferred union doesn't widen at the call sites."
+     Action:  reply + 👎, leave thread open for human
+
+   Item 4, CI: lint
      Category: FIX (CI)
      Cause:   unused import
-     Edit:    src/bar.ts:3, remove unused `foo`
+     Edit:    src/qux.ts:3, remove unused `foo`
 
    Skipped (expected-fail on fixups): Commit / Autosquash, Commit message lint
 
-   Summary: 2 fixes, 1 fixup commit targeting <sha>, 1 reply.
+   Summary: 3 fixes, 1 fixup commit targeting <sha>, 2 replies, 1 reaction, 1 thread resolve.
    ```
 
    Wait for explicit approval. The user may approve all, a subset, or request edits. No action on silence.
 
 10. **Apply approved fixes**: edit the code, show the diff before staging, stage by file name (no `-A`/`.`), `git commit --fixup <original-sha>` per relevant main commit, push.
 
-11. **Post approved replies and resolve threads**:
+11. **Post approved replies, react, and resolve threads.**
+
+    Reply to a thread:
 
     ```bash
-    # Reply to a thread
     gh api graphql -F threadId=<id> -F body="..." -f query='
       mutation($threadId:ID!,$body:String!){
         addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$threadId,body:$body}){ comment{ id url } }
       }'
+    ```
 
-    # Resolve once the fixup is pushed
+    React 👍 / 👎 to an AI reviewer's original comment (use `content=+1` or `content=-1`). The `<databaseId>` is the comment's REST id, returned by the `reviewThreads` GraphQL query as `comments.nodes[].databaseId` — NOT the node `id`:
+
+    ```bash
+    gh api -X POST repos/<owner>/<repo>/pulls/comments/<databaseId>/reactions -f content=+1
+    ```
+
+    Resolve once the fixup is pushed (skip this for 👎-disagreement threads on AI reviewers — leave them open for a human):
+
+    ```bash
     gh api graphql -F threadId=<id> -f query='
       mutation($threadId:ID!){ resolveReviewThread(input:{threadId:$threadId}){ thread{ id isResolved } } }'
     ```
@@ -109,6 +140,8 @@ Triage unresolved review threads, failing CI checks, and DeepSource issues on a 
 - Read DeepSource issues from the check run log; use the CLI.
 - Resolve a thread until the fix is pushed.
 - Mass-reply "fixed!" to threads you didn't actually fix.
+- Reply "Fixed!" to an AI reviewer when the fix matched their proposal — react 👍 + resolve instead. The reaction is the canonical "addressed" signal for these bots; a reply is noise.
+- Resolve an AI reviewer thread you disagreed with — react 👎 + reply with your reasoning and leave the thread open for a human to weigh in.
 - Lead a reply with a commit SHA. Describe the change in plain language; anchor the commit only when the SHA itself is genuinely useful.
 - Categorize a subjective disagreement as `FIX`; use `REPLY`.
 - Proceed on `DEFER` items without asking.

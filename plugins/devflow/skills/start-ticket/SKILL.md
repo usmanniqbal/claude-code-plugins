@@ -55,7 +55,7 @@ Turn a Jira ticket into a grounded research summary and a draft plan: scope, rel
 
 8. **Draft the plan.** Sections:
    - **Branch name**: `<TICKET>-<kebab-desc>`, 3-5 words derived from the ticket title (no generic placeholders).
-   - **Worktree path**: `~/worktrees/<project>/<TICKET>-<kebab-desc>/`.
+   - **Worktree location** (if the user uses worktrees): a directory whose final segment matches the branch name, so `cd <path>` lands without a lookup. Follow the user's worktree convention if one is recorded in user memory or in this repo's CLAUDE.md; ask if neither is set. Don't hardcode a parent directory.
    - **Approach**: 3-7 bullets on the plan of attack, grounded in the surveyed files and design.
    - **Files likely touched**: with anchored links to the current `<base>` versions.
    - **Risks / unknowns**: what could derail this, what needs investigation first.

@@ -30,6 +30,7 @@ Open a PR that matches the repo's conventions and won't bounce on missing refere
    - Body follows the template.
    - Verification Steps must be realistic: ask reviewers to verify the implementation, not to wait for CI.
    - Include the Jira ticket reference (e.g., `EXP-XXXXX`) in the title or a dedicated Ticket field.
+   - **Reference only the PR's own ticket in the body.** Don't include other Jira keys or `browse/<KEY>` URLs anywhere in the description — even in Followup, Related, or Blockers sections — because many Jira-GitHub automations transition **every** referenced ticket to Done on merge, sweeping siblings that shouldn't close. Mention related work by feature name in prose ("follow-up to the AI Summary widget"), not by key. The commit `Resolves: <KEY>` footer is the intended trigger and stays.
 
 7. **Push the branch** with `-u` if it isn't tracking a remote.
 
@@ -42,3 +43,4 @@ Open a PR that matches the repo's conventions and won't bounce on missing refere
 - Invent template sections the repo doesn't use.
 - Skip dependency verification on config-touching PRs.
 - Ask reviewers to "wait for CI to pass" as a verification step.
+- Cross-link sibling Jira tickets in the PR description. Auto-Done automations sweep every referenced key on merge.

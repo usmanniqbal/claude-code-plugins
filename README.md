@@ -11,7 +11,7 @@ In Claude Code:
 /plugin install devflow@usmanniqbal
 ```
 
-Plugin skills are namespaced, invoked as `/devflow:start-ticket`, `/devflow:create-pr`, `/devflow:review-pr`, `/devflow:announce-pr`, and `/devflow:address-pr-comments`.
+Plugin skills are namespaced, invoked as `/devflow:start-ticket`, `/devflow:create-pr`, `/devflow:review-pr`, `/devflow:announce-pr`, `/devflow:address-pr-comments`, `/devflow:dependabot-triage`, and `/devflow:announce-dependabot-merges`.
 
 ### First-time MCP auth
 
@@ -33,6 +33,8 @@ On first use, run `/mcp` and authenticate both servers via OAuth.
 | `review-pr` | Reviews a PR with the linked Jira ticket's context: customer impact, acceptance criteria, linked escalations, optional Slack thread follow-up. |
 | `announce-pr` | Transitions the Jira ticket to "To Review" (status `Review`, transition id `41`), then posts to Slack with `unfurl_links: false` after previewing. |
 | `address-pr-comments` | Triages review threads, failing CI checks, and DeepSource issues. Categorizes each as fix/reply/defer, previews the plan, and on approval pushes fixup commits and posts replies. Skips the autosquash and commit-message-lint checks that expectedly fail on fixups. |
+| `dependabot-triage` | Researches open Dependabot PRs: CI rollup, mergeability, branch protection (classic or rulesets), per-package version bumps and changelogs, staleness, and false-⛔ CI-infra failures. Categorizes ✅/🟡/⛔ with a merge order. Read-only; never merges or comments without per-PR approval. |
+| `announce-dependabot-merges` | Drafts a Slack digest of the Dependabot PRs merged across the EventMobi frontend repos over a time window, in the team's house mrkdwn style. Drafts only; never posts to a channel. |
 
 All skills read `plugins/devflow/CONVENTIONS.md` for shared rules: tool access preference (MCP > CLI > curl, ask before each fallback), anchored references, writing style, and expected-fail CI checks.
 
@@ -52,6 +54,8 @@ plugins/
       review-pr/SKILL.md
       announce-pr/SKILL.md
       address-pr-comments/SKILL.md
+      dependabot-triage/SKILL.md
+      announce-dependabot-merges/SKILL.md
 ```
 
 ## Adding a new plugin

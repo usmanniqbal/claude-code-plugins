@@ -23,6 +23,8 @@ Review a PR with the customer context, acceptance criteria, and urgency signals 
 
    `<TICKET>` is the ticket key, never the PR number. `<PR title>` is the exact title from `gh pr view --json title`, never the repo or branch name.
 
+   Then follow `CONVENTIONS.md` "Tmux tab renaming" with `<verb>` = `review` (label: `<TICKET> review`).
+
 4. **Fetch the Jira ticket** via the Atlassian MCP (`getJiraIssue`). Capture status, priority, assignee, description, acceptance criteria, linked external tickets (HubSpot escalations, support cases), and parent epic if referenced.
 
 5. **Follow Slack links from the ticket.** Scan ticket description and comments for `https://<workspace>.slack.com/archives/<C...>/p<ts>` permalinks.

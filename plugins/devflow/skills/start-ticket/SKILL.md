@@ -31,6 +31,8 @@ Turn a Jira ticket into a grounded research summary and a draft plan: scope, rel
 
    `<short desc>` = 3-6 words derived from the ticket title (skip filler like "fix", "update", "the").
 
+   Then follow `CONVENTIONS.md` "Tmux tab renaming" with `<verb>` = `plan` (label: `<TICKET> plan`).
+
 5. **Walk linked resources, one hop only.** For every external link in the ticket's description and comments, fetch the target via the appropriate MCP per `CONVENTIONS.md`:
    - **Figma**: `get_design_context` and `get_screenshot` for each linked node.
    - **Slack**: fetch the linked message or thread permalink.

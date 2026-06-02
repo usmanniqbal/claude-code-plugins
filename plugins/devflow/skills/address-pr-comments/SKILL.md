@@ -44,6 +44,8 @@ Triage unresolved review threads, failing CI checks, and DeepSource issues on a 
 
    `<TICKET>` = ticket key (never the PR number). `<PR title>` = exact title from `gh pr view --json title`.
 
+   Then follow `CONVENTIONS.md` "Tmux tab renaming" with `<verb>` = `fix` (label: `<TICKET> fix`).
+
 5. **Build the triage list.** One entry per: unresolved review thread, top-level PR comment without an author response, failing check (after filtering the expected-fail checks listed in CONVENTIONS.md).
 
 6. **DeepSource failures**: don't read the check log. Instead:

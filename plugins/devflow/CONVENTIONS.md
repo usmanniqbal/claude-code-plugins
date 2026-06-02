@@ -110,3 +110,19 @@ These two checks legitimately fail while the branch has unsquashed `fixup!` comm
 
 - `Commit / Autosquash check (...)`
 - `Commit / Commit message lint (...)`
+
+## Tmux tab renaming
+
+When a skill emits a `/rename` line for the Claude session, also rename the surrounding tmux tab so a session is findable in tmux's tab list. The `/rename` slash command retitles the Claude session card; `tmux rename-window` retitles the tab. Both are useful and complementary.
+
+Apply only when running inside tmux: `[ -n "$TMUX" ]`. Outside tmux, skip the whole flow (no preference needed).
+
+The tmux label is shorter than the session rename: `<TICKET> <verb>` (e.g., `EXP-22217 plan`, `EXP-22217 review`, `EXP-22217 fix`). Each skill specifies its own `<verb>`.
+
+Memory lookup before any prompt: read `~/.claude/projects/-Users-usman-developer/memory/feedback_tmux_rename.md` for a standing preference. Expected values: `always`, `ask`, or `no`.
+
+- **`always`**: run `tmux rename-window '<TICKET> <verb>'` immediately.
+- **`no`**: skip silently.
+- **`ask`** or file absent: ask the user "Rename tmux tab to `<TICKET> <verb>`? `this time` / `always` / `no`." On `always` or `no`, save that value as the new standing preference. On `this time`, run the rename for this session without saving. Create the memory file (and any missing parent directories) when saving for the first time.
+
+The rename is local and reversible (`tmux rename-window` again, or `setw automatic-rename on`), so a wrong call is cheap.
